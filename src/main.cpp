@@ -53,6 +53,8 @@ int main()
         //triangle_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
         
         shader.bind();
+        //shader.set_uniform("varHello",glm::vec2{1.f, 3.f});
+        shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
         rectangle_mesh.draw();
     }
 }
