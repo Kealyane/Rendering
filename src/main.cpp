@@ -55,6 +55,8 @@ int main()
         shader.bind();
         //shader.set_uniform("varHello",glm::vec2{1.f, 3.f});
         shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
+        shader.set_uniform("offsetTime",gl::time_in_seconds());
+        shader.set_uniform("squareSize",0.5f);
         rectangle_mesh.draw();
     }
 }
