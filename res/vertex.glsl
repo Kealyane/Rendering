@@ -10,9 +10,9 @@ void main()
     vec2 newPos = in_position;
     vec2 newPosRatio = vec2(newPos.x/aspect_ratio, newPos.y);
 
-    float time = sin(offsetTime*0.5) * squareSize;
-    float x = newPosRatio.x;
-    vec2 newPosTime = vec2( x + time, newPosRatio.y);
+    float timeX = newPosRatio.x + cos(offsetTime*0.5) * squareSize;
+    float timeY = newPosRatio.y + sin(offsetTime*0.5) * squareSize;
+    vec2 newPosTime = vec2(timeX, timeY);
     
     gl_Position = vec4(newPosTime, 0., 1.);
 }
