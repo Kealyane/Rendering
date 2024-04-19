@@ -12,9 +12,13 @@ int main()
         .layout = {gl::VertexAttribute::Position2D{0 /*Index de l'attribut dans le shader, on en reparle juste après*/}},
         .data   = 
             {
-            -1.f, -1.f, // Position2D du 1er sommet
-            +1.f, -1.f, // Position2D du 2ème sommet
-             0.f, +1.f  // Position2D du 3ème sommet
+            -0.5f, -0.5f, 
+            +0.5f, -0.5f, 
+            +0.5f, +0.5f,
+
+            -0.5f, -0.5f,
+            +0.5f, +0.5f,
+            -0.5f, +0.5f, 
             },
         }},
     }};
