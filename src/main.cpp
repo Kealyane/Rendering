@@ -6,6 +6,10 @@ int main()
     gl::init("TPs de Rendering"); // On crée une fenêtre et on choisit son nom
     gl::maximize_window(); // On peut la maximiser si on veut
 
+    auto const shader = gl::Shader{{
+        .vertex   = gl::ShaderSource::File{"res/vertex.glsl"},
+        .fragment = gl::ShaderSource::File{"res/fragment.glsl"},
+    }};
 
     // auto const triangle_mesh = gl::Mesh{{
     // .vertex_buffers = 
@@ -45,8 +49,10 @@ int main()
         glClearColor(0.2f, 0.8f, 0.3f, 1.f); // Choisis la couleur à utiliser. Les paramètres sont R, G, B, A avec des valeurs qui vont de 0 à 1
         glClear(GL_COLOR_BUFFER_BIT); // Exécute concrètement l'action d'appliquer sur tout l'écran la couleur choisie au-dessus
     
-        gl::bind_default_shader(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
+        //gl::bind_default_shader(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
         //triangle_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
+        
+        shader.bind();
         rectangle_mesh.draw();
     }
 }
