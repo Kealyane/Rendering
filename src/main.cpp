@@ -21,6 +21,8 @@ int main()
 
 
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
+
     // On peut configurer l'équation qui mélange deux couleurs, comme pour faire différents blend mode dans Photoshop. 
     // Cette équation-ci donne le blending "normal" entre pixels transparents.
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE); 
@@ -86,7 +88,7 @@ int main()
         0, 1, 2, 0, 2, 3,  
         1, 5, 6, 1, 6, 2,
         5, 4, 7, 5, 7, 6,
-        4, 0, 7, 4, 3, 0,
+        4, 0, 7, 7, 3, 0,
         2, 6, 7, 2, 7, 3,
         1, 5, 4, 1, 4, 0
     },
@@ -95,8 +97,10 @@ int main()
     while (gl::window_is_open())
     {
         glClearColor(0.62f, 0.0f, 1.0f, 1.f); // Choisis la couleur à utiliser. Les paramètres sont R, G, B, A avec des valeurs qui vont de 0 à 1
-        glClear(GL_COLOR_BUFFER_BIT); // Exécute concrètement l'action d'appliquer sur tout l'écran la couleur choisie au-dessus
-    
+        //glClear(GL_COLOR_BUFFER_BIT); // Exécute concrètement l'action d'appliquer sur tout l'écran la couleur choisie au-dessus
+        
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         //gl::bind_default_shader(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
         //triangle_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
         

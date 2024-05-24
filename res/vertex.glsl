@@ -6,6 +6,9 @@ uniform float offsetTime;
 uniform float squareSize;
 uniform mat4 matrix;
 
+out vec3 vertex_position;
+
+
 void main()
 {
     /*
@@ -17,6 +20,6 @@ void main()
     vec2 newPosTime = vec2(timeX, timeY);
     gl_Position = vec4(newPosTime, 0., 1.);
     */
-
+    vertex_position = in_position;
     gl_Position = matrix * vec4(in_position, 1.);
 }
