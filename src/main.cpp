@@ -89,12 +89,19 @@ int main()
 
 
         glm::mat4 const view_matrix = camera.view_matrix();
+        
         // param1 : field of view in radians
         // param2 : aspect ratio
         // param3 : near plane
         glm::mat4 const projection_matrix = glm::infinitePerspective(1.f, gl::framebuffer_aspect_ratio(), 0.001f);
-        glm::mat4 const view_projection_matrix = projection_matrix * view_matrix;
+        //glm::mat4 const projection_matrix = glm::infinitePerspective(0.5f, 2.f, 0.001f);
+        //glm::mat4 const projection_matrix = glm::infinitePerspective(2.f, 5.f, 0.5f);
+        
+        //glm::mat4 const ortho_matrix = glm::ortho(0.f,0.f,0.f,1.f);
 
+        glm::mat4 const view_projection_matrix = projection_matrix * view_matrix;
+        //glm::mat4 const view_projection_matrix = ortho_matrix * view_matrix;
+        
         shader.bind();
         shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
         shader.set_uniform("offsetTime",gl::time_in_seconds());
