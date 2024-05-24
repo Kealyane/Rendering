@@ -15,10 +15,12 @@ out vec2 out_uv;
 void main()
 {
     
-    out_uv = in_uv;
+    //out_uv = in_uv;
     vec2 newPosRatio = vec2(in_positionSquare.x/aspect_ratio, in_positionSquare.y)*2;
     gl_Position = vec4(newPosRatio, 0., 1.);
 
+    float move_uvX = in_uv.x + (0.01*offsetTime);
+    out_uv = vec2(move_uvX, in_uv.y);
 
     //vec2 newPos = in_positionSquare;
     //vec2 newPosRatio = vec2(newPos.x/aspect_ratio, newPos.y);
