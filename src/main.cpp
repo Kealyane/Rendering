@@ -5,6 +5,10 @@ int main()
     // Initialisation
     gl::init("TPs de Rendering"); // On crée une fenêtre et on choisit son nom
     gl::maximize_window(); // On peut la maximiser si on veut
+    glEnable(GL_BLEND);
+    // On peut configurer l'équation qui mélange deux couleurs, comme pour faire différents blend mode dans Photoshop. 
+    // Cette équation-ci donne le blending "normal" entre pixels transparents.
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_ONE); 
 
     auto const shader = gl::Shader{{
         .vertex   = gl::ShaderSource::File{"res/vertex.glsl"},
