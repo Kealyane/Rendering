@@ -58,10 +58,10 @@ int main()
     .vertex_buffers = {{
         .layout = {gl::VertexAttribute::Position2D{0},gl::VertexAttribute::UV{1}},
         .data   = {
-            -0.5f, -0.5f, 0.f, 0.f, // Position2D du 1er sommet - 0
-            +0.5f, -0.5f, 1.f, 0.f, // Position2D du 2ème sommet - 1
-            +0.5f, +0.5f, 1.f, 1.f, // Position2D du 3ème sommet - 2
-            -0.5f, +0.5f, 0.f, 1.f  // Position2D du 4ème sommet - 3
+            -0.5f, -0.5f, -1.f, -1.f, // Position2D du 1er sommet - 0
+            +0.5f, -0.5f, 2.f, -1.f, // Position2D du 2ème sommet - 1
+            +0.5f, +0.5f, 2.f, 2.f, // Position2D du 3ème sommet - 2
+            -0.5f, +0.5f, -1.f, 2.f  // Position2D du 4ème sommet - 3
         },
     }},
     .index_buffer   = {
@@ -103,8 +103,9 @@ int main()
     gl::TextureOptions{
         .minification_filter  = gl::Filter::Linear, // Comment on va moyenner les pixels quand on voit l'image de loin ?
         .magnification_filter = gl::Filter::Linear, // Comment on va interpoler entre les pixels quand on zoom dans l'image ?
-        .wrap_x               = gl::Wrap::Repeat,   // Quelle couleur va-t-on lire si jamais on essaye de lire en dehors de la texture ?
-        .wrap_y               = gl::Wrap::Repeat,   // Idem, mais sur l'axe Y. En général on met le même wrap mode sur les deux axes.
+        .wrap_x               = gl::Wrap::ClampToBorder,//ClampToEdge,//MirroredRepeat,//Repeat,   // Quelle couleur va-t-on lire si jamais on essaye de lire en dehors de la texture ?
+        .wrap_y               = gl::Wrap::ClampToBorder,//ClampToEdge,//MirroredRepeat,//Repeat,   // Idem, mais sur l'axe Y. En général on met le même wrap mode sur les deux axes.
+        .border_color         = glm::vec4(1.f),
     }
     };
 
@@ -158,6 +159,8 @@ int main()
         //glm::mat4 const model_view_projection_matrix = translation * rotation * view_projection_matrix;
         glm::mat4 const model_view_projection_matrix = rotation * translation * view_projection_matrix;
         
+    
+
         shader.bind();
         shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
         shader.set_uniform("offsetTime",gl::time_in_seconds());
