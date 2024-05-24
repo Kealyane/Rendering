@@ -1,10 +1,24 @@
 #include "opengl-framework/opengl-framework.hpp" // Inclue la librairie qui va nous servir à faire du rendu
+#include "glm/ext/matrix_clip_space.hpp"
 
 int main()
 {
     // Initialisation
     gl::init("TPs de Rendering"); // On crée une fenêtre et on choisit son nom
     gl::maximize_window(); // On peut la maximiser si on veut
+    
+    auto camera = gl::Camera{};
+    //gl::set_events_callbacks({camera.events_callbacks()});
+
+    gl::set_events_callbacks({
+        camera.events_callbacks(),
+        {
+            .on_mouse_pressed = [&](gl::MousePressedEvent const& e) { },
+        },
+    });
+
+
+
     glEnable(GL_BLEND);
     // On peut configurer l'équation qui mélange deux couleurs, comme pour faire différents blend mode dans Photoshop. 
     // Cette équation-ci donne le blending "normal" entre pixels transparents.
@@ -55,14 +69,15 @@ int main()
 
     while (gl::window_is_open())
     {
-        //glClearColor(0.2f, 0.8f, 0.3f, 1.f); // Choisis la couleur à utiliser. Les paramètres sont R, G, B, A avec des valeurs qui vont de 0 à 1
-        //glClear(GL_COLOR_BUFFER_BIT); // Exécute concrètement l'action d'appliquer sur tout l'écran la couleur choisie au-dessus
+        glClearColor(0.62f, 0.0f, 1.0f, 1.f); // Choisis la couleur à utiliser. Les paramètres sont R, G, B, A avec des valeurs qui vont de 0 à 1
+        glClear(GL_COLOR_BUFFER_BIT); // Exécute concrètement l'action d'appliquer sur tout l'écran la couleur choisie au-dessus
     
         //gl::bind_default_shader(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
         //triangle_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
         
+/*
+        // BLEND
         shader.bind();
-        //shader.set_uniform("varHello",glm::vec2{1.f, 3.f});
         shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
         shader.set_uniform("offsetTime",gl::time_in_seconds());
         shader.set_uniform("squareSize",0.5f);
@@ -70,5 +85,22 @@ int main()
 
         shaderBackground.bind();
         rectangle_mesh.draw();
+*/
+
+
+        glm::mat4 const view_matrix = camera.view_matrix();
+        // param1 : field of view in radians
+        // param2 : aspect ratio
+        // param3 : near plane
+        glm::mat4 const projection_matrix = glm::infinitePerspective(1.f, gl::framebuffer_aspect_ratio(), 0.001f);
+        glm::mat4 const view_projection_matrix = projection_matrix * view_matrix;
+
+        shader.bind();
+        shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
+        shader.set_uniform("offsetTime",gl::time_in_seconds());
+        shader.set_uniform("squareSize",0.5f);
+        shader.set_uniform("view_projection_matrix",view_projection_matrix);
+        rectangle_mesh.draw();
+
     }
 }
