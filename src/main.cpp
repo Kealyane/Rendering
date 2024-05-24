@@ -1,5 +1,6 @@
 #include "opengl-framework/opengl-framework.hpp" // Inclue la librairie qui va nous servir à faire du rendu
 #include "glm/ext/matrix_clip_space.hpp"
+#include "glm/ext/matrix_transform.hpp"
 
 int main()
 {
@@ -101,12 +102,24 @@ int main()
 
         glm::mat4 const view_projection_matrix = projection_matrix * view_matrix;
         //glm::mat4 const view_projection_matrix = ortho_matrix * view_matrix;
+
+        // param1 : mat4{1}
+        // param2 : angle de la rotation
+        // param3 : axe autour duquel on tourne
+        glm::mat4 const rotation = glm::rotate(glm::mat4{1.f}, gl::time_in_seconds(), glm::vec3{0.f, 0.f, 1.f});
+
+        // param1 : mat4{1}
+        // param2 : vecteur de déplacement
+        glm::mat4 const translation = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 1.f, 0.f});    
+
+        //glm::mat4 const model_view_projection_matrix = translation * rotation * view_projection_matrix;
+        glm::mat4 const model_view_projection_matrix = rotation * translation * view_projection_matrix;
         
         shader.bind();
         shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
         shader.set_uniform("offsetTime",gl::time_in_seconds());
         shader.set_uniform("squareSize",0.5f);
-        shader.set_uniform("view_projection_matrix",view_projection_matrix);
+        shader.set_uniform("matrix",model_view_projection_matrix);
         rectangle_mesh.draw();
 
     }
