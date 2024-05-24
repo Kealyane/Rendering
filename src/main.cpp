@@ -56,15 +56,39 @@ int main()
     .vertex_buffers = {{
         .layout = {gl::VertexAttribute::Position2D{0}},
         .data   = {
-            -0.5f, -0.5f, // Position2D du 1er sommet
-            +0.5f, -0.5f, // Position2D du 2ème sommet
-            +0.5f, +0.5f, // Position2D du 3ème sommet
-            -0.5f, +0.5f  // Position2D du 4ème sommet
+            -0.5f, -0.5f, // Position2D du 1er sommet - 0
+            +0.5f, -0.5f, // Position2D du 2ème sommet - 1
+            +0.5f, +0.5f, // Position2D du 3ème sommet - 2
+            -0.5f, +0.5f  // Position2D du 4ème sommet - 3
         },
     }},
     .index_buffer   = {
         0, 1, 2, // Indices du premier triangle : on utilise le 1er, 2ème et 3ème sommet
         0, 2, 3  // Indices du deuxième triangle : on utilise le 1er, 3ème et 4ème sommet
+    },
+    }};
+
+    auto const cube_mesh = gl::Mesh{{
+    .vertex_buffers = {{
+        .layout = {gl::VertexAttribute::Position3D{0}},
+        .data   = {
+            -0.5f, -0.5f, 0.f, // 0
+            +0.5f, -0.5f, 0.f, // 1
+            +0.5f, +0.5f, 0.f, // 2
+            -0.5f, +0.5f, 0.f,  // 3
+            -0.5f, -0.5f, 0.5f, // 4
+            +0.5f, -0.5f, 0.5f, // 5
+            +0.5f, +0.5f, 0.5f, // 6
+            -0.5f, +0.5f, 0.5f, // 7
+        },
+    }},
+    .index_buffer   = {
+        0, 1, 2, 0, 2, 3,  
+        1, 5, 6, 1, 6, 2,
+        5, 4, 7, 5, 7, 6,
+        4, 0, 7, 4, 3, 0,
+        2, 6, 7, 2, 7, 3,
+        1, 5, 4, 1, 4, 0
     },
     }};
 
@@ -119,8 +143,8 @@ int main()
         shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
         shader.set_uniform("offsetTime",gl::time_in_seconds());
         shader.set_uniform("squareSize",0.5f);
-        shader.set_uniform("matrix",model_view_projection_matrix);
-        rectangle_mesh.draw();
-
+        shader.set_uniform("matrix",view_projection_matrix);
+        //rectangle_mesh.draw();
+        cube_mesh.draw();
     }
 }
