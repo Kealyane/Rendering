@@ -56,12 +56,12 @@ int main()
 
     auto const rectangle_mesh = gl::Mesh{{
     .vertex_buffers = {{
-        .layout = {gl::VertexAttribute::Position2D{0}},
+        .layout = {gl::VertexAttribute::Position2D{0},gl::VertexAttribute::UV{1}},
         .data   = {
-            -0.5f, -0.5f, // Position2D du 1er sommet - 0
-            +0.5f, -0.5f, // Position2D du 2ème sommet - 1
-            +0.5f, +0.5f, // Position2D du 3ème sommet - 2
-            -0.5f, +0.5f  // Position2D du 4ème sommet - 3
+            -0.5f, -0.5f, 0.f, 0.f, // Position2D du 1er sommet - 0
+            +0.5f, -0.5f, 1.f, 0.f, // Position2D du 2ème sommet - 1
+            +0.5f, +0.5f, 1.f, 1.f, // Position2D du 3ème sommet - 2
+            -0.5f, +0.5f, 0.f, 1.f  // Position2D du 4ème sommet - 3
         },
     }},
     .index_buffer   = {
@@ -93,6 +93,7 @@ int main()
         1, 5, 4, 1, 4, 0
     },
     }};
+
 
     while (gl::window_is_open())
     {
@@ -148,7 +149,8 @@ int main()
         shader.set_uniform("offsetTime",gl::time_in_seconds());
         shader.set_uniform("squareSize",0.5f);
         shader.set_uniform("matrix",view_projection_matrix);
-        //rectangle_mesh.draw();
-        cube_mesh.draw();
+
+        rectangle_mesh.draw();
+        //cube_mesh.draw();
     }
 }
