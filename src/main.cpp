@@ -18,7 +18,6 @@ int main()
         },
     });
 
-
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
 
@@ -176,7 +175,7 @@ int main()
         });
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         shaderRender.bind();
         shaderRender.set_uniform("textureCube", render_target.color_texture(0));
         rectangle_mesh.draw();
