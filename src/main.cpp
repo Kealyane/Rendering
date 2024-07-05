@@ -100,7 +100,7 @@ int main()
     auto const texture = gl::Texture{
         gl::TextureSource::File{
             // Peut être un fichier, ou directement un tableau de pixels
-            .path = "res/texture-test.png",
+            .path = "res/meshes/fourareen2K_albedo.jpg",
             .flip_y = true,                              // Il n'y a pas de convention universelle sur la direction de l'axe Y. Les fichiers (.png, .jpeg) utilisent souvent une direction différente de celle attendue par OpenGL. Ce booléen flip_y est là pour inverser la texture si jamais elle n'apparaît pas dans le bon sens.
             .texture_format = gl::InternalFormat::RGBA8, // Format dans lequel la texture sera stockée. On pourrait par exemple utiliser RGBA16 si on voulait 16 bits par canal de couleur au lieu de 8. (Mais ça ne sert à rien dans notre cas car notre fichier ne contient que 8 bits par canal, donc on ne gagnerait pas de précision). On pourrait aussi stocker en RGB8 si on ne voulait pas de canal alpha. On utilise aussi parfois des textures avec un seul canal (R8) pour des usages spécifiques.
         },
@@ -203,47 +203,65 @@ int main()
         }
     }
 
-    GLuint vao, vbo, ebo;
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glGenBuffers(1, &ebo);
+    
+    auto const mesh3D = gl::Mesh{{
+        .vertex_buffers = {{
+            .layout = {gl::VertexAttribute::Position3D{0}},
+            .data = vertices,
+        },
+        {
+            .layout = {gl::VertexAttribute::UV{1}},
+            .data = texcoords,
+        },
+        {
+             .layout = {gl::VertexAttribute::Normal3D{2}},
+             .data = normals,
+        },
+        },
+    }};
 
-    glBindVertexArray(vao);
+    // GLuint vao, vbo, ebo;
+    // glGenVertexArrays(1, &vao);
+    // glGenBuffers(1, &vbo);
+    // glGenBuffers(1, &ebo);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    // glBindVertexArray(vao);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    // glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-    // Positions
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-    // Normales
-    if (!normals.empty())
-    {
-        GLuint normalVBO;
-        glGenBuffers(1, &normalVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-        glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    }
+    // // Positions
+    // glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
 
-    // Coordonnées de texture
-    if (!texcoords.empty())
-    {
-        GLuint texcoordVBO;
-        glGenBuffers(1, &texcoordVBO);
-        glBindBuffer(GL_ARRAY_BUFFER, texcoordVBO);
-        glBufferData(GL_ARRAY_BUFFER, texcoords.size() * sizeof(float), texcoords.data(), GL_STATIC_DRAW);
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
-    }
+    // // Normales
+    // if (!normals.empty())
+    // {
+    //     GLuint normalVBO;
+    //     glGenBuffers(1, &normalVBO);
+    //     glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+    //     glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
+    //     glEnableVertexAttribArray(1);
+    //     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+    // }
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    // // Coordonnées de texture
+    // if (!texcoords.empty())
+    // {
+    //     GLuint texcoordVBO;
+    //     glGenBuffers(1, &texcoordVBO);
+    //     glBindBuffer(GL_ARRAY_BUFFER, texcoordVBO);
+    //     glBufferData(GL_ARRAY_BUFFER, texcoords.size() * sizeof(float), texcoords.data(), GL_STATIC_DRAW);
+    //     glEnableVertexAttribArray(2);
+    //     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
+    // }
+
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glBindVertexArray(0);
+
 
     // ---- BOUCLE WHILE -------
 
@@ -271,14 +289,14 @@ int main()
                 // param1 : mat4{1}
                 // param2 : angle de la rotation
                 // param3 : axe autour duquel on tourne
-                glm::mat4 const rotation = glm::rotate(glm::mat4{1.f}, gl::time_in_seconds(), glm::vec3{0.f, 0.f, 1.f});
+                // glm::mat4 const rotation = glm::rotate(glm::mat4{1.f}, gl::time_in_seconds(), glm::vec3{0.f, 0.f, 1.f});
 
-                // param1 : mat4{1}
-                // param2 : vecteur de déplacement
-                glm::mat4 const translation = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 1.f, 0.f});
+                // // param1 : mat4{1}
+                // // param2 : vecteur de déplacement
+                // glm::mat4 const translation = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 1.f, 0.f});
 
                 // glm::mat4 const model_view_projection_matrix = translation * rotation * view_projection_matrix;
-                glm::mat4 const model_view_projection_matrix = rotation * translation * view_projection_matrix;
+                glm::mat4 const model_view_projection_matrix = view_projection_matrix;
 
                 /*
                 shader.bind();
@@ -292,18 +310,10 @@ int main()
                 cube_mesh.draw();
                 */
 
-                glm::mat4 model = glm::mat4(1.0f);
-                glm::mat4 view = camera.view_matrix();
-                glm::mat4 projection = glm::perspective(glm::radians(45.0f), gl::framebuffer_aspect_ratio(), 0.1f, 100.0f);
-
-                shaderMesh.bind();
-                shaderMesh.set_uniform("model", model);
-                shaderMesh.set_uniform("view", view);
-                shaderMesh.set_uniform("projection", projection);
-
-                glBindVertexArray(vao);
-                glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-                glBindVertexArray(0);
+                shader.bind();
+                shader.set_uniform("matrix", model_view_projection_matrix);
+                shader.set_uniform("my_texture", texture);
+                mesh3D.draw();
             });
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -311,5 +321,7 @@ int main()
         shaderRender.bind();
         shaderRender.set_uniform("textureCube", render_target.color_texture(0));
         rectangle_mesh.draw();
+
+        
     }
 }
