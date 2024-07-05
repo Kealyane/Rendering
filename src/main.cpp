@@ -263,6 +263,8 @@ int main()
     // glBindVertexArray(0);
 
 
+
+
     // ---- BOUCLE WHILE -------
 
     while (gl::window_is_open())
@@ -309,10 +311,12 @@ int main()
 
                 cube_mesh.draw();
                 */
+                glm::vec3 light_direction = normalize(glm::vec3(0.2, 0.3, -1.));
 
                 shader.bind();
                 shader.set_uniform("matrix", model_view_projection_matrix);
                 shader.set_uniform("my_texture", texture);
+                shader.set_uniform("light_direction", light_direction);
                 mesh3D.draw();
             });
 
