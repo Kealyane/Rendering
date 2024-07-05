@@ -10,11 +10,12 @@ uniform sampler2D my_texture;
 uniform vec3 light_direction;
 uniform vec3 point_light;
 
+uniform vec3 colorPointLight;
+uniform vec3 colorAmbiantLight;
+uniform vec3 colorDirectionalLight;
+
 const float ambiant_light = 0.3;
 const float intensity = 0.4;
-const vec3 colorPointLigth = vec3(0.0, 1.0, 0.0);
-const vec3 colorAmbiantLigth = vec3(1.0, 0.0, 0.0);
-const vec3 colorDirectionalLigth = vec3(0.0, 0.0, 1.0);
 
 void main()
 {
@@ -28,7 +29,7 @@ void main()
 
     float decreaseLight = 1 / (lightPoint_distance * lightPoint_distance);
 
-    vec3 light = lightDirectional * colorDirectionalLigth + ambiant_light * colorAmbiantLigth + (lightPoint * decreaseLight * intensity) * colorPointLigth ;
+    vec3 light = lightDirectional * colorDirectionalLight + ambiant_light * colorAmbiantLight + (lightPoint * decreaseLight * intensity) * colorPointLight;
 
     out_color = vec4(texture_color.rgb * light, 1.0);
     

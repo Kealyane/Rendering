@@ -313,14 +313,26 @@ int main()
                 cube_mesh.draw();
                 */
                 glm::vec3 light_direction = normalize(glm::vec3(0.2, 0.3, -1.));
+                glm::vec3 colorDirectionalLight = glm::vec3(0.0, 0.0, 1.0);
+
                 glm::vec3 point_light = normalize(glm::vec3(0.5, 0.8, 1.));
+                glm::vec3 colorPointLight = glm::vec3(0.0, 1.0, 0.0);
+
+                glm::vec3 colorAmbiantLight = glm::vec3(1.0, 0.0, 0.0);
 
                 shader.bind();
                 shader.set_uniform("model_matrix", model_view_projection_matrix);
                 shader.set_uniform("normal_matrix", normal_matrix);
                 shader.set_uniform("my_texture", texture);
+
                 shader.set_uniform("light_direction", light_direction);
+                shader.set_uniform("colorDirectionalLight", colorDirectionalLight);
+
                 shader.set_uniform("point_light", point_light);
+                shader.set_uniform("colorPointLight", colorPointLight);
+
+                shader.set_uniform("colorAmbiantLight", colorAmbiantLight);
+
                 mesh3D.draw();
             });
 
