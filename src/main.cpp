@@ -300,6 +300,7 @@ int main()
                 // glm::mat4 const model_view_projection_matrix = translation * rotation * view_projection_matrix;
                 glm::mat4 const model_view_projection_matrix = view_projection_matrix * rotation;
 
+                glm::mat4 const normal_matrix = glm::inverse(glm::transpose(model_view_projection_matrix));
                 /*
                 shader.bind();
                 shader.set_uniform("aspect_ratio",gl::framebuffer_aspect_ratio());
@@ -315,7 +316,8 @@ int main()
                 glm::vec3 point_light = normalize(glm::vec3(0.5, 0.8, 1.));
 
                 shader.bind();
-                shader.set_uniform("matrix", model_view_projection_matrix);
+                shader.set_uniform("model_matrix", model_view_projection_matrix);
+                shader.set_uniform("normal_matrix", normal_matrix);
                 shader.set_uniform("my_texture", texture);
                 shader.set_uniform("light_direction", light_direction);
                 shader.set_uniform("point_light", point_light);
