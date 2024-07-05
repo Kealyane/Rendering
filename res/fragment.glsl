@@ -1,6 +1,7 @@
 #version 410
 
 out vec4 out_color;
+
 in vec2 out_uv;
 in vec3 out_normal;
 in vec3 out_position;

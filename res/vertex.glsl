@@ -10,10 +10,30 @@ out vec2 out_uv;
 out vec3 out_normal;
 out vec3 out_position;
 
+vec3 apply_matrix_to_position(mat4 matrix, vec3 point)
+{
+    vec4 tmp = matrix * vec4(point, 1.);
+    return tmp.xyz / tmp.w;
+}
+
+vec3 apply_matrix_to_direction(mat4 matrix, vec3 direction)
+{
+    vec4 tmp = matrix * vec4(direction, 0.);
+    return normalize(tmp.xyz);
+}
+
 void main()
 {
-    gl_Position = matrix * vec4(in_position, 1.);
-    out_position = in_position;
-    out_uv = in_uv ; 
-    out_normal = in_normal;
+    vec3 worldPos = apply_matrix_to_position(matrix, in_position);
+    vec3 worldNormal = apply_matrix_to_direction(matrix, in_normal);
+
+    gl_Position = vec4(worldPos, 1.);
+    out_position = worldPos;
+    out_uv = in_uv; 
+    out_normal = worldNormal;
+
+    //gl_Position = matrix * vec4(in_position, 1.);
+    //out_position = in_position;
+    //out_uv = in_uv ; 
+    //out_normal = in_normal;
 }

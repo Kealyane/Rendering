@@ -291,14 +291,14 @@ int main()
                 // param1 : mat4{1}
                 // param2 : angle de la rotation
                 // param3 : axe autour duquel on tourne
-                // glm::mat4 const rotation = glm::rotate(glm::mat4{1.f}, gl::time_in_seconds(), glm::vec3{0.f, 0.f, 1.f});
+                glm::mat4 const rotation = glm::rotate(glm::mat4{1.f}, gl::time_in_seconds(), glm::vec3{1.f, 0.f, 0.f});
 
                 // // param1 : mat4{1}
                 // // param2 : vecteur de déplacement
                 // glm::mat4 const translation = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 1.f, 0.f});
 
                 // glm::mat4 const model_view_projection_matrix = translation * rotation * view_projection_matrix;
-                glm::mat4 const model_view_projection_matrix = view_projection_matrix;
+                glm::mat4 const model_view_projection_matrix = view_projection_matrix * rotation;
 
                 /*
                 shader.bind();
