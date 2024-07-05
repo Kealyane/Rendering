@@ -8,10 +8,12 @@ uniform mat4 matrix;
 
 out vec2 out_uv;
 out vec3 out_normal;
+out vec3 out_position;
 
 void main()
 {
     gl_Position = matrix * vec4(in_position, 1.);
-    out_uv = in_uv ; //vec2(in_uv.x, in_uv.y);
+    out_position = in_position;
+    out_uv = in_uv ; 
     out_normal = in_normal;
 }
