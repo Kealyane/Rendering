@@ -10,13 +10,13 @@ uniform vec3 light_direction;
 uniform vec3 point_light;
 
 const float ambiant_light = 0.3;
+const float intensity = 0.4;
 
 void main()
 {
     vec4 texture_color = texture(my_texture, out_uv);
     vec3 normal = normalize(out_normal);
-    float light = max(dot(normal, light_direction), 0.0);
-    //light = light + ambiant_light;
+    float lightDirectional = max(dot(normal, light_direction), 0.0);
 
     vec3 lightPoint_direction = normalize(point_light - out_position);
     float lightPoint_distance = length(point_light - out_position);
@@ -24,7 +24,7 @@ void main()
 
     float decreaseLight = 1 / (lightPoint_distance * lightPoint_distance);
 
-    light = light + (ambiant_light * decreaseLight);
+    float light = lightDirectional + ambiant_light + (lightPoint * decreaseLight * intensity) ;
 
     out_color = vec4(texture_color.rgb * light, 1.0);
     
