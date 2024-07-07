@@ -6,6 +6,58 @@
 #include <iostream>
 #include <vector>
 
+void computeTangentsAndBitangents(const std::vector<float> &vertices, const std::vector<float> &texcoords,
+    const std::vector<unsigned int> &indices, std::vector<float> &tangents, std::vector<float> &bitangents)
+{
+    tangents.resize(vertices.size());
+    bitangents.resize(vertices.size());
+
+    for (size_t i = 0; i < indices.size(); i += 3)
+    {
+        unsigned int i0 = indices[i];
+        unsigned int i1 = indices[i + 1];
+        unsigned int i2 = indices[i + 2];
+
+        glm::vec3 pos1(vertices[3 * i0], vertices[3 * i0 + 1], vertices[3 * i0 + 2]);
+        glm::vec3 pos2(vertices[3 * i1], vertices[3 * i1 + 1], vertices[3 * i1 + 2]);
+        glm::vec3 pos3(vertices[3 * i2], vertices[3 * i2 + 1], vertices[3 * i2 + 2]);
+
+        glm::vec2 uv1(texcoords[2 * i0], texcoords[2 * i0 + 1]);
+        glm::vec2 uv2(texcoords[2 * i1], texcoords[2 * i1 + 1]);
+        glm::vec2 uv3(texcoords[2 * i2], texcoords[2 * i2 + 1]);
+
+        glm::vec3 edge1 = pos2 - pos1;
+        glm::vec3 edge2 = pos3 - pos1;
+        glm::vec2 deltaUV1 = uv2 - uv1;
+        glm::vec2 deltaUV2 = uv3 - uv1;
+
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        glm::vec3 tangent;
+        tangent.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+        tangent = glm::normalize(tangent);
+
+        glm::vec3 bitangent;
+        bitangent.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+        bitangent = glm::normalize(bitangent);
+
+        for (unsigned int j : {i0, i1, i2})
+        {
+            tangents[3 * j] = tangent.x;
+            tangents[3 * j + 1] = tangent.y;
+            tangents[3 * j + 2] = tangent.z;
+            bitangents[3 * j] = bitangent.x;
+            bitangents[3 * j + 1] = bitangent.y;
+            bitangents[3 * j + 2] = bitangent.z;
+        }
+    }
+}
+
+
 int main()
 {
     // Initialisation
@@ -109,7 +161,22 @@ int main()
             .magnification_filter = gl::Filter::Linear, // Comment on va interpoler entre les pixels quand on zoom dans l'image ?
             .wrap_x = gl::Wrap::Repeat,                 // Quelle couleur va-t-on lire si jamais on essaye de lire en dehors de la texture ?
             .wrap_y = gl::Wrap::Repeat,                 // Idem, mais sur l'axe Y. En général on met le même wrap mode sur les deux axes.
-        }};
+        }
+    };
+
+    auto const normal_map = gl::Texture{
+        gl::TextureSource::File{
+            .path = "res/meshes/fourareen_normalMap.png", 
+            .flip_y = true,
+            .texture_format = gl::InternalFormat::RGBA8, 
+        },
+        gl::TextureOptions{
+            .minification_filter = gl::Filter::Linear,
+            .magnification_filter = gl::Filter::Linear, 
+            .wrap_x = gl::Wrap::Repeat, 
+            .wrap_y = gl::Wrap::Repeat,
+        }
+    };    
 
     // ------ RENDER TARGET --------
 
@@ -203,9 +270,15 @@ int main()
         }
     }
 
-    
-    auto const mesh3D = gl::Mesh{{
-        .vertex_buffers = {{
+    std::vector<float> tangents;
+    std::vector<float> bitangents;
+
+    computeTangentsAndBitangents(vertices, texcoords, indices, tangents, bitangents);
+
+    auto const mesh3D = gl::Mesh{
+        {
+        .vertex_buffers = {
+        {
             .layout = {gl::VertexAttribute::Position3D{0}},
             .data = vertices,
         },
@@ -217,52 +290,17 @@ int main()
              .layout = {gl::VertexAttribute::Normal3D{2}},
              .data = normals,
         },
+        {
+            .layout = {gl::VertexAttribute::Position3D{3}},
+             .data = tangents,
         },
-    }};
-
-    // GLuint vao, vbo, ebo;
-    // glGenVertexArrays(1, &vao);
-    // glGenBuffers(1, &vbo);
-    // glGenBuffers(1, &ebo);
-
-    // glBindVertexArray(vao);
-
-    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    // glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-    // // Positions
-    // glEnableVertexAttribArray(0);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-
-    // // Normales
-    // if (!normals.empty())
-    // {
-    //     GLuint normalVBO;
-    //     glGenBuffers(1, &normalVBO);
-    //     glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-    //     glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(float), normals.data(), GL_STATIC_DRAW);
-    //     glEnableVertexAttribArray(1);
-    //     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
-    // }
-
-    // // Coordonnées de texture
-    // if (!texcoords.empty())
-    // {
-    //     GLuint texcoordVBO;
-    //     glGenBuffers(1, &texcoordVBO);
-    //     glBindBuffer(GL_ARRAY_BUFFER, texcoordVBO);
-    //     glBufferData(GL_ARRAY_BUFFER, texcoords.size() * sizeof(float), texcoords.data(), GL_STATIC_DRAW);
-    //     glEnableVertexAttribArray(2);
-    //     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void *)0);
-    // }
-
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // glBindVertexArray(0);
-
-
+        {
+            .layout = {gl::VertexAttribute::Position3D{4}},
+             .data = bitangents,
+        },
+        },
+    }
+    };
 
 
     // ---- BOUCLE WHILE -------
@@ -323,7 +361,9 @@ int main()
                 shader.bind();
                 shader.set_uniform("model_matrix", model_view_projection_matrix);
                 shader.set_uniform("normal_matrix", normal_matrix);
+
                 shader.set_uniform("my_texture", texture);
+                shader.set_uniform("my_normal_map", normal_map);
 
                 shader.set_uniform("light_direction", light_direction);
                 shader.set_uniform("colorDirectionalLight", colorDirectionalLight);
